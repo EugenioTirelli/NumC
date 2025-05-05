@@ -19,4 +19,5 @@ Matrix *transpose2d(const Matrix *);
 Matrix *dot_prod(Matrix *, Matrix *);
 double maxel(Matrix *);
 double minel(Matrix *);
+Matrix *reverse1d(Matrix *);
 #endif

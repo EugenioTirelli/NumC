@@ -13,15 +13,32 @@
 
 int main(int argc, char *argv[])
 {
-  Matrix *t = linspacef(0.0, 10.0, 10, 1, 0);
-  print_matrix(t);
-  Matrix* yt = sin_op(t);
+  Matrix* a = create_matrix(2, (int[]){1, 6});
+  Matrix* b = create_matrix(2, (int[]){1, 3});
 
-  CMatrix* yf = dft1d(yt);
-  print_cmatrix(yf);
+  double a_values[] = {4, 1, 0, 7, 6, 5};
+  double b_values[] = {1, 2, 3};
  
-  free_matrix(t);
-  free_cmatrix(yf);
+  memcpy(a->data, a_values, sizeof(a_values));
+  memcpy(b->data, b_values, sizeof(b_values));
+
+
+  Matrix* full = convolve1d(a, b, 1);
+  Matrix* valid = convolve1d(a, b, 2);
+  Matrix* same = convolve1d(a, b, 3);
+
+  print_matrix(a);
+  print_matrix(b);
+  printf("\n");
+  print_matrix(full);
+  print_matrix(valid);
+  print_matrix(same);
+
+  free_matrix(a);
+  free_matrix(b);
+  free_matrix(full);
+  free_matrix(valid);
+  free_matrix(same);
 
 
   printf("End of program.\n");

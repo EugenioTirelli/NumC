@@ -6,5 +6,5 @@
 #include <complex.h>
 
 CMatrix *dft1d(const Matrix *);
-
+Matrix *convolve1d(Matrix *, Matrix *, int);
 #endif

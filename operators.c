@@ -299,3 +299,19 @@ double minel(Matrix* m) {
     return min_;
 }
 
+Matrix* reverse1d(Matrix* m) {
+  assert (m != NULL);
+  assert (m -> dims == 2);
+  assert (m->shape[0] == 1 || m->shape[1] == 1);
+  Matrix* rev_m = create_matrix(m->dims, m->shape);
+
+  int size = 1;
+
+  for (int i = 0; i < m->dims; i++) {
+    size *= m->shape[i];
+  }
+  for (int i = 0; i < size; i++) {
+    rev_m->data[i] = m->data[size - i - 1];
+  }
+  return rev_m;
+}

@@ -6,6 +6,7 @@
 #include "basics.h"
 
 
+
 Matrix *create_matrix(int dims, int* shape) {
   assert(dims > 1);
 
@@ -25,8 +26,8 @@ Matrix *create_matrix(int dims, int* shape) {
     exit(EXIT_FAILURE);
   }
 
-  int size = 1;
 
+  int size = 1;
   for (int i = 0; i < dims; i++) {
     mat->shape[i] = shape[i];
     size *= shape[i];
@@ -58,6 +59,13 @@ void get_matrix_shape(Matrix *mat) {
   printf("\n");
 }
 
+int get_matrix_size(Matrix *mat) {
+  int size = 1;
+  for (int i = 0; i < mat->dims; i++) {
+    size *= mat->shape[i];
+  }
+  return size;
+}
 
 void print_matrix(const Matrix* mat) {
   if (mat->dims == 2) {
