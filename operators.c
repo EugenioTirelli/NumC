@@ -148,6 +148,7 @@ Matrix* power_op(Matrix* m, double p) {
 }
 
 
+
 double sum1d(Matrix * m) {
   assert (m != NULL);
   assert (m->shape[0] == 1 || m->shape[1] == 1);
@@ -434,3 +435,64 @@ Matrix* reverse1d(Matrix* m) {
   }
   return rev_m;
 }
+
+void swap2d_rows(Matrix* m, int id_rows1, int id_rows2) {
+  assert(m != NULL);
+  assert(m->shape[0] > 1 && m->shape[1] > 1);
+
+  assert(id_rows1 >= 0 && id_rows1 < m->shape[0]);
+  assert(id_rows2 >= 0 && id_rows2 < m->shape[0]);
+
+  int ncols = m->shape[1];
+
+  Matrix* temp = create_matrix(2, (int[]){1,ncols});
+  if (temp == NULL) {
+    return;
+  }
+
+  for (int j = 0; j < ncols; j++) {
+    temp->data[j] = m->data[id_rows1 * ncols + j];
+  }
+
+  for (int j = 0; j < ncols; j++) {
+    m->data[id_rows1 * ncols + j] = m->data[id_rows2 * ncols + j];
+  }
+
+  for (int j = 0; j < ncols; j++) {
+    m->data[id_rows2 * ncols + j] = temp->data[j];
+  }
+
+  free(temp);
+}
+
+void swap2d_cols(Matrix* m, int id_cols1, int id_cols2) {
+  assert(m != NULL);
+  assert(m->shape[0] > 1 && m->shape[1] > 1);
+
+  assert(id_cols1 >= 0 && id_cols1 < m->shape[1]);
+  assert(id_cols2 >= 0 && id_cols2 < m->shape[1]);
+
+  int nrows = m->shape[0];
+  int ncols = m->shape[1];
+
+  Matrix* temp = create_matrix(2, (int[]){nrows, 1});
+  if (temp == NULL) {
+    return;
+  }
+
+  for (int j = 0; j < nrows; j++) {
+    temp->data[j] = m->data[id_cols1 + ncols * j];
+  }
+
+  for (int j = 0; j < nrows; j++) {
+    m->data[id_cols1 + ncols * j] = m->data[id_cols2 + ncols * j];
+  }
+
+  for (int j = 0; j < nrows; j++) {
+    m->data[id_cols2 + ncols * j] = temp->data[j];
+  }
+
+  free(temp);
+}
+
+

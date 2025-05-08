@@ -13,25 +13,18 @@
 
 int main(int argc, char *argv[])
 {
-  Matrix* a = create_matrix(2, (int[]){3,3});
-  Matrix* test_matrix = ones(2, (int[]){10000, 10000});
+  Matrix* test_mat = rndmat(2, (int[]){10, 4}, -10.0, 10.0);
 
-  Matrix* res = sum2d(test_matrix, 1);
+  print_matrix(test_mat);
+  printf("\n");
 
-  double a_values[] = {1,2,3,4,5,6,7,8,9};
- 
-  memcpy(a->data, a_values, sizeof(a_values));
+  swap2d_rows(test_mat, 0, 9);
+  print_matrix(test_mat);
+  printf("\n");
 
-  Matrix* s2d_axis0 = sum2d(a, 0);
-  Matrix* s2d_axis1 = sum2d(a, 1);
-
-  print_matrix(s2d_axis0);
-  print_matrix(s2d_axis1);
-
-  free_matrix(test_matrix);
-  free_matrix(s2d_axis0);
-  free_matrix(s2d_axis1);
-
+  swap2d_cols(test_mat, 2, 3);
+  print_matrix(test_mat);
+  printf("\n");
 
   printf("End of program.\n");
   return 0;
