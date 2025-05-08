@@ -13,32 +13,24 @@
 
 int main(int argc, char *argv[])
 {
-  Matrix* a = create_matrix(2, (int[]){1, 6});
-  Matrix* b = create_matrix(2, (int[]){1, 3});
+  Matrix* a = create_matrix(2, (int[]){3,3});
+  Matrix* test_matrix = ones(2, (int[]){10000, 10000});
 
-  double a_values[] = {4, 1, 0, 7, 6, 5};
-  double b_values[] = {1, 2, 3};
+  Matrix* res = sum2d(test_matrix, 1);
+
+  double a_values[] = {1,2,3,4,5,6,7,8,9};
  
   memcpy(a->data, a_values, sizeof(a_values));
-  memcpy(b->data, b_values, sizeof(b_values));
 
+  Matrix* s2d_axis0 = sum2d(a, 0);
+  Matrix* s2d_axis1 = sum2d(a, 1);
 
-  Matrix* full = convolve1d(a, b, 1);
-  Matrix* valid = convolve1d(a, b, 2);
-  Matrix* same = convolve1d(a, b, 3);
+  print_matrix(s2d_axis0);
+  print_matrix(s2d_axis1);
 
-  print_matrix(a);
-  print_matrix(b);
-  printf("\n");
-  print_matrix(full);
-  print_matrix(valid);
-  print_matrix(same);
-
-  free_matrix(a);
-  free_matrix(b);
-  free_matrix(full);
-  free_matrix(valid);
-  free_matrix(same);
+  free_matrix(test_matrix);
+  free_matrix(s2d_axis0);
+  free_matrix(s2d_axis1);
 
 
   printf("End of program.\n");

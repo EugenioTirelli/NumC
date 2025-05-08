@@ -1,7 +1,6 @@
 #include "signal_processing.h"
 #include "basics.h"
 #include "cbasics.h"
-#include "operators.h"
 #include <complex.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,15 +8,12 @@
 #include <string.h>
 
 
-CMatrix *dft1d(const Matrix *m) {
+CMatrix *dft1d(Matrix *m) {
   assert(m != NULL);
 
   CMatrix *df_matrix = create_cmatrix(m->dims, m->shape);
 
-  int size = 1;
-  for (int i = 0; i < m->dims; i++) {
-    size *= m->shape[i];
-  }
+  int size = get_matrix_size(m);
 
   for (int j = 0; j < size; j++) {
     double complex sum = 0.0 + 0.0 * I;
@@ -38,11 +34,7 @@ CMatrix *dft1d(const Matrix *m) {
 //   mode 1: FULL convolution, length = a_size + b_size - 1
 //   mode 2: VALID convolution, length = a_size - b_size + 1  (assuming a_size >= b_size)
 //   mode 3: SAME  convolution, length = max(a_size, b_size)
-//   mode 4: SUBSET extraction: returns only a subset (here, first 10 elements)
 //
-// Note: A precise implementation of VALID and SAME would require adjusting the indices
-// used in the summation. Here we compute the full convolution first and then extract
-// the relevant region for mode 2, 3 or 4.
 Matrix* convolve1d(Matrix* a, Matrix* b, int mode) {
   assert(a != NULL && b != NULL);
   assert(a->shape[0] != 2 || a->shape[1] != 2);
@@ -69,7 +61,7 @@ Matrix* convolve1d(Matrix* a, Matrix* b, int mode) {
       offset = (full_length - desired_length) / 2;
       break;
     default:
-      printf(stderr, "Please provide a mode.\n");
+      fprintf(stderr, "Please provide a mode.\n");
       return NULL;
       break;
   }
@@ -98,3 +90,6 @@ Matrix* convolve1d(Matrix* a, Matrix* b, int mode) {
   free(temp);
   return out;
 }
+
+
+

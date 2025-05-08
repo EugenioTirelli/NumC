@@ -5,6 +5,6 @@
 #include "cbasics.h"
 #include <complex.h>
 
-CMatrix *dft1d(const Matrix *);
+CMatrix *dft1d(Matrix *);
 Matrix *convolve1d(Matrix *, Matrix *, int);
 #endif

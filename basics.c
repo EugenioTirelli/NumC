@@ -93,10 +93,7 @@ void print_matrix(const Matrix* mat) {
 
 void fill_matrix(Matrix* m, const double n) {
   assert (m != NULL);
-  int size = 1;
-  for (int i = 0; i < m->dims; i++) {
-    size *= m->shape[i];
-  }
+  int size = get_matrix_size(m);
   for (int i = 0; i < size; i++) {
     m->data[i] = n;
   }

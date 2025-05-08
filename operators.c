@@ -6,17 +6,14 @@
 #include <math.h>
 
 
-Matrix* sin_op(const Matrix* mat_) {
+Matrix* sin_op(Matrix* mat_) {
   if (!mat_) {
-    fprintf(stderr, "Input matrix is NULL in sin_operator\n");
+    fprintf(stderr, "Input matrix is NULL in sin_op\n");
     return NULL;
   }
 
   Matrix* result = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     result->data[i] = sin(mat_->data[i]);
@@ -24,17 +21,14 @@ Matrix* sin_op(const Matrix* mat_) {
   return result;
 }
 
-Matrix* cos_op(const Matrix* mat_) {
+Matrix* cos_op(Matrix* mat_) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in cos_op\n");
     return NULL;
   }
 
   Matrix* result = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     result->data[i] = cos(mat_->data[i]);
@@ -42,35 +36,28 @@ Matrix* cos_op(const Matrix* mat_) {
   return result;
 }
 
-Matrix* abs_op(const Matrix* mat_) {
+Matrix* abs_op(Matrix* mat_) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in abs_op\n");
     return NULL;
   }
 
   Matrix* result = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     result->data[i] = fabs(mat_->data[i]); }
   return result;
 }
 
-Matrix* exp_op(const Matrix* mat_) {
+Matrix* exp_op(Matrix* mat_) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in exp_op\n");
     return NULL;
   }
 
   Matrix* res_ = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     res_->data[i] = exp(mat_->data[i]);
@@ -79,18 +66,181 @@ Matrix* exp_op(const Matrix* mat_) {
   return res_;
 }
 
-Matrix* const_mul(const Matrix* mat_, const double k) {
+Matrix* sqrt_op(Matrix* mat_) {
+  if (!mat_) {
+    fprintf(stderr, "Input matrix is NULL in sqrt_op\n");
+    return NULL;
+  }
+
+  Matrix* res_ = create_matrix(mat_->dims, mat_->shape);
+  int size = get_matrix_size(mat_);
+
+  for (int i = 0; i < size; i++) {
+    res_->data[i] = sqrt(mat_->data[i]);
+  }
+
+  return res_;
+}
+
+
+Matrix* loge_op(Matrix* m) {
+  if (!m) {
+    fprintf(stderr, "Input matrix is NULL in loge_op\n");
+    return NULL;
+  }
+
+  Matrix* res_ = create_matrix(m->dims, m->shape);
+  int size = get_matrix_size(m);
+
+  for (int i = 0; i < size; i++) {
+    res_->data[i] = log(m->data[i]);
+  }
+
+  return res_;
+}
+
+
+Matrix* log10_op(Matrix* m) {
+  if (!m) {
+    fprintf(stderr, "Input matrix is NULL in log10_op\n");
+    return NULL;
+  }
+
+  Matrix* res_ = create_matrix(m->dims, m->shape);
+  int size = get_matrix_size(m);
+
+  for (int i = 0; i < size; i++) {
+    res_->data[i] = log10(m->data[i]);
+  }
+
+  return res_;
+}
+
+Matrix* log2_op(Matrix* m) {
+  if (!m) {
+    fprintf(stderr, "Input matrix is NULL in log2_op\n");
+    return NULL;
+  }
+
+  Matrix* res_ = create_matrix(m->dims, m->shape);
+  int size = get_matrix_size(m);
+
+  for (int i = 0; i < size; i++) {
+    res_->data[i] = log2(m->data[i]);
+  }
+
+  return res_;
+}
+
+
+Matrix* power_op(Matrix* m, double p) {
+  if (!m) {
+    fprintf(stderr, "Input matrix is NULL in power_op\n");
+  }
+
+  Matrix *res = create_matrix(m->dims, m->shape);
+  int size = get_matrix_size(res);
+
+  for (int i = 0; i < size; i++) {
+    res->data[i] = pow(m->data[i], p);
+  }
+  return res;
+}
+
+
+double sum1d(Matrix * m) {
+  assert (m != NULL);
+  assert (m->shape[0] == 1 || m->shape[1] == 1);
+  double sum = 0;
+  int m_size = get_matrix_size(m);
+
+  for (int i = 0; i < m_size; i++) {
+    sum += m->data[i];
+  }
+  return sum;
+}
+
+double prod1d(Matrix * m) {
+  assert (m != NULL);
+  assert (m->shape[0] == 1 || m->shape[1] == 1);
+  double prod = 1;
+  int m_size = get_matrix_size(m);
+
+  for (int i = 0; i < m_size; i++) {
+    prod += m->data[i];
+  }
+  return prod;
+}
+
+Matrix* sum2d(Matrix* m, int axis) {
+  assert(m->shape[0] > 1 && m->shape[1] > 1);
+
+  int nrows = (axis == 0) ? m->shape[0] : 1;
+  int ncols = (axis == 1) ? m->shape[1] : 1;
+  int new_shape[2] = {nrows, ncols};
+
+  Matrix* sum_2dmat = create_matrix(2, new_shape);
+  if (axis == 0) {
+    for (int i = 0; i < m->shape[0]; i++) {
+      double row_sum = 0.0;
+      for (int j = 0; j < m->shape[1]; j++) {
+        row_sum += m->data[i * m->shape[1] + j];
+      }
+      sum_2dmat->data[i] = row_sum;
+    }
+  }
+  else if (axis == 1) {
+    for (int j = 0; j < m->shape[1]; j++) {
+      double col_sum = 0.0;
+      for (int i = 0; i < m->shape[0]; i++) {
+        col_sum += m->data[i * m->shape[1] + j];
+      }
+      sum_2dmat->data[j] = col_sum;
+    }
+  }
+  return sum_2dmat;
+}
+
+
+Matrix* prod2d(Matrix* m, int axis) {
+  assert(m->shape[0] > 1 && m->shape[1] > 1);
+
+  int nrows = (axis == 0) ? m->shape[0] : 1;
+  int ncols = (axis == 1) ? m->shape[1] : 1;
+  int new_shape[2] = {nrows, ncols};
+
+  Matrix* prod_2dmat = create_matrix(2, new_shape);
+  if (axis == 0) {
+    for (int i = 0; i < m->shape[0]; i++) {
+      double row_prod = 1.0;
+      for (int j = 0; j < m->shape[1]; j++) {
+        row_prod *= m->data[i * m->shape[1] + j];
+      }
+      prod_2dmat->data[i] = row_prod;
+    }
+  }
+  else if (axis == 1) {
+    for (int j = 0; j < m->shape[1]; j++) {
+      double col_prod = 1.0;
+      for (int i = 0; i < m->shape[0]; i++) {
+        col_prod *= m->data[i * m->shape[1] + j];
+      }
+      prod_2dmat->data[j] = col_prod;
+    }
+  }
+  return prod_2dmat;
+}
+
+
+Matrix* const_mul(Matrix* mat_, const double k) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in const_mul\n");
     return NULL;
   }
 
   Matrix* ret_ = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
+  int size = get_matrix_size(mat_);
 
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
 
   for (int i = 0; i < size; i++) {
     ret_->data[i] = mat_->data[i] * k;
@@ -100,18 +250,14 @@ Matrix* const_mul(const Matrix* mat_, const double k) {
 }
 
 
-Matrix* const_add(const Matrix* mat_, const double k) {
+Matrix* const_add(Matrix* mat_, const double k) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in const_add\n");
     return NULL;
   }
 
   Matrix* ret_ = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     ret_->data[i] = mat_->data[i] + k;
@@ -120,18 +266,14 @@ Matrix* const_add(const Matrix* mat_, const double k) {
   return ret_;
 }
 
-Matrix* const_sub(const Matrix* mat_, const double k) {
+Matrix* const_sub(Matrix* mat_, const double k) {
   if (!mat_) {
     fprintf(stderr, "Input matrix is NULL in const_sub\n");
     return NULL;
   }
 
   Matrix* ret_ = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     ret_->data[i] = mat_->data[i] - k;
@@ -141,7 +283,7 @@ Matrix* const_sub(const Matrix* mat_, const double k) {
 }
 
 
-Matrix* const_div(const Matrix* mat_, const double k) {
+Matrix* const_div(Matrix* mat_, const double k) {
   assert (k > 0);
 
   if (!mat_) {
@@ -150,11 +292,7 @@ Matrix* const_div(const Matrix* mat_, const double k) {
   }
 
   Matrix* ret_ = create_matrix(mat_->dims, mat_->shape);
-  int size = 1;
-
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   for (int i = 0; i < size; i++) {
     ret_->data[i] = mat_->data[i] / k;
@@ -168,10 +306,7 @@ Matrix* rad2deg(Matrix* mat) {
 
   Matrix* deg_mat = create_matrix(mat->dims, mat->shape);
 
-  int size = 1;
-  for (int i = 0; i < mat->dims; i++) {
-    size *= mat->shape[i];
-  }
+  int size = get_matrix_size(mat);
 
   for (int i = 0; i < size; i++) {
     deg_mat->data[i] = (180. / M_PI) * mat->data[i];
@@ -186,10 +321,7 @@ Matrix* deg2rad(Matrix* mat) {
 
   Matrix* rad_mat = create_matrix(mat->dims, mat->shape);
 
-  int size = 1;
-  for (int i = 0; i < mat->dims; i++) {
-    size *= mat->shape[i];
-  }
+  int size = get_matrix_size(mat);
 
   for (int i = 0; i < size; i++) {
     rad_mat->data[i] = (M_PI / 180.) * mat->data[i];
@@ -205,11 +337,7 @@ Matrix* transpose2d(Matrix* mat_) {
 
   Matrix* ret_ = create_matrix(mat_->dims, tshape);
 
-  int size = 1;
-
-  for (int i = 0; i < mat_->dims; i++) {
-    size *= mat_->shape[i];
-  }
+  int size = get_matrix_size(mat_);
 
   int rows = mat_->shape[1];
   int cols = mat_->shape[0];
@@ -263,40 +391,34 @@ Matrix* dot_prod(Matrix* a, Matrix* b) {
 
 
 double maxel(Matrix* m) {
-    assert(m != NULL);
-    int size = 1;
-    for (int i = 0; i < m->dims; i++) {
-        size *= m->shape[i];
+  assert(m != NULL);
+  int size = get_matrix_size(m);
+
+  double max_ = m->data[0];
+
+  for (int i = 1; i < size; i++) {
+    if (m->data[i] > max_) {
+      max_ = m->data[i];
     }
+  }
 
-    double max_ = m->data[0];
-
-    for (int i = 1; i < size; i++) {
-        if (m->data[i] > max_) {
-            max_ = m->data[i];
-        }
-    }
-
-    return max_;
+  return max_;
 }
 
 
 double minel(Matrix* m) {
-    assert(m != NULL);
-    int size = 1;
-    for (int i = 0; i < m->dims; i++) {
-        size *= m->shape[i];
+  assert(m != NULL);
+  int size = get_matrix_size(m);
+
+  double min_ = m->data[0];
+
+  for (int i = 1; i < size; i++) {
+    if (m->data[i] < min_) {
+      min_ = m->data[i];
     }
+  }
 
-    double min_ = m->data[0];
-
-    for (int i = 1; i < size; i++) {
-        if (m->data[i] < min_) {
-            min_ = m->data[i];
-        }
-    }
-
-    return min_;
+  return min_;
 }
 
 Matrix* reverse1d(Matrix* m) {
@@ -305,11 +427,8 @@ Matrix* reverse1d(Matrix* m) {
   assert (m->shape[0] == 1 || m->shape[1] == 1);
   Matrix* rev_m = create_matrix(m->dims, m->shape);
 
-  int size = 1;
+  int size = get_matrix_size(m);
 
-  for (int i = 0; i < m->dims; i++) {
-    size *= m->shape[i];
-  }
   for (int i = 0; i < size; i++) {
     rev_m->data[i] = m->data[size - i - 1];
   }
