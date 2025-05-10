@@ -31,4 +31,5 @@ double minel(Matrix *);
 Matrix *reverse1d(Matrix *);
 void swap2d_rows(Matrix *, int, int);
 void swap2d_cols(Matrix *, int, int);
+Matrix *get_matrix_diag(Matrix *);
 #endif

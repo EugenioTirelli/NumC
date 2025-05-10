@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include "basics.h"
 #include <math.h>
+#include "linalg.h"
 
 
 Matrix* sin_op(Matrix* mat_) {
@@ -494,5 +495,23 @@ void swap2d_cols(Matrix* m, int id_cols1, int id_cols2) {
 
   free(temp);
 }
+
+
+Matrix* get_matrix_diag(Matrix* m) {
+  assert (is_squared_matrix(m));
+  int size = m->shape[0];
+  Matrix* diag_element_array = create_matrix(2, (int[]){1, size});
+
+  for (int i = 0; i < size; i++) {
+    diag_element_array->data[i] = m->data[(size + 1) * i];
+  }
+  return diag_element_array;
+}
+
+
+
+
+
+
 
 
