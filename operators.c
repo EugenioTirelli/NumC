@@ -510,8 +510,33 @@ Matrix* get_matrix_diag(Matrix* m) {
 
 
 
+Matrix* get_matrix_row(Matrix* m, int idx) {
+  assert (m != NULL);
+  assert (idx >= 0 && idx < m->shape[0]);
+ 
+  int ncols = m->shape[1];
+
+  Matrix* row = create_matrix(m->dims, (int[]){1,m->shape[1]});
+  for (int i = 0; i < ncols; i++) {
+    row->data[i] = m->data[idx * ncols + i];
+  }
+  return row;
+}
 
 
+Matrix* get_matrix_col(Matrix* m, int idx) {
+  assert(m != NULL);
+  assert(idx >= 0 && idx < m->shape[1]);
 
+  int rows = m->shape[0];
+  int columns = m->shape[1];
+  Matrix* column = create_matrix(2, (int[]){rows, 1});
+
+  for (int i = 0; i < rows; i++) {
+    column->data[i] = m->data[i * columns + idx];
+  }
+
+  return column;
+}
 
 

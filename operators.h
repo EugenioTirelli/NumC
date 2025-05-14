@@ -32,4 +32,6 @@ Matrix *reverse1d(Matrix *);
 void swap2d_rows(Matrix *, int, int);
 void swap2d_cols(Matrix *, int, int);
 Matrix *get_matrix_diag(Matrix *);
+Matrix *get_matrix_row(Matrix *, int);
+Matrix *get_matrix_col(Matrix *, int);
 #endif
