@@ -11,10 +11,30 @@
 
 
 bool is_squared_matrix(Matrix* m) {
-    assert(m->dims == 2);
-    return (m->shape[0] == m->shape[1]);
+  assert(m->dims == 2);
+  return (m->shape[0] == m->shape[1]);
 }
 
+
+bool is_symmetric_matrix(Matrix * m, double tol) {
+  assert(m != NULL);
+  assert(m->dims == 2);
+  assert(is_squared_matrix(m));
+  int n = m->shape[0];
+
+  int flag = 1;
+  #pragma omp parallel for
+  for (int i = 0; i < n; i++) {
+    for (int j = i + 1; j < n; j++) {
+      double el1 = m->data[i * n + j];
+      double el2 = m->data[j * n + i];
+      if (fabs(el1 - el2) > tol) {
+        flag = 0;
+      }
+    }
+  }
+  return flag;
+}
 
 
 void lu_decomposition(Matrix* A, Matrix* L, Matrix* U) {
@@ -81,9 +101,11 @@ void lu_decomposition(Matrix* A, Matrix* L, Matrix* U) {
 Matrix* forward_LU_subs(Matrix *L, Matrix *b) {
   int n = L->shape[0];
   Matrix* y = create_matrix(b->dims, b->shape);
-  #pragma omp parallel for
+
   for (int i = 0; i < n; i++) {
     double sum = 0.0;
+
+    #pragma omp parallel for reduction(+:sum)
     for (int k = 0; k < i; k++) {
       sum += L->data[i * n + k] * y->data[k];
     }
@@ -98,9 +120,10 @@ Matrix* backward_LU_subs(Matrix *U, Matrix *y) {
   int n = U->shape[0];
   Matrix* x = create_matrix(y->dims, y->shape);
 
-  #pragma omp parallel for
   for (int i = n - 1; i >= 0; i--) {
     double sum = 0.0;
+
+    #pragma omp parallel for reduction(+:sum)
     for (int k = i + 1; k < n; k++) {
       sum += U->data[i * n + k] * x->data[k];
     }
@@ -190,7 +213,6 @@ Matrix* inv(Matrix* A) {
 }
 
 
-
 Matrix* add_mat(Matrix* a, Matrix* b) {
   assert(b != NULL);
   assert(a->dims == b->dims);
@@ -234,3 +256,19 @@ Matrix* sub_mat(Matrix* a, Matrix* b) {
 
 
 
+Matrix* conjugate_gradient_lin_sys(Matrix *A, Matrix *b) {
+  assert (A != NULL);
+  assert (b != NULL);
+  assert (is_squared_matrix(A));
+  assert (b->shape[1] == 1);
+  assert (A->shape[0] == b->shape[0]);
+
+  if (!is_symmetric_matrix(A, 1e-6)) {
+    printf("Cnj grad method better performs with symm matrices\n");
+    printf("Consider to use other <solve_lin_sys>\n");
+  }
+
+
+
+  return NULL;
+}

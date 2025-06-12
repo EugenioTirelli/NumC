@@ -48,6 +48,7 @@ Matrix *create_matrix(int dims, int* shape) {
 void free_matrix(Matrix* mat) {
   free(mat->data);
   free(mat->shape);
+  free(mat->data);
   free(mat);
 }
 
@@ -104,4 +105,58 @@ Matrix* copy_matrix(Matrix* m) {
   Matrix* cm = create_matrix(m->dims, m->shape);
   memcpy(cm, m, sizeof(Matrix));
   return cm;
+}
+
+
+SparseMatrix *create_sparse_matrix(int nrows, int ncols, int nzero_entries) {
+  SparseMatrix* smat = (SparseMatrix*) malloc(sizeof(SparseMatrix));
+  if (smat == NULL) {
+    perror("Memory allocation failed.");
+    exit(EXIT_FAILURE);
+  }
+  smat->row_indexes = (int*)calloc(nzero_entries, sizeof(int));
+  smat->col_indexes = (int*)calloc(nzero_entries, sizeof(int));
+  if (smat->row_indexes == NULL || smat->col_indexes == NULL) {
+    perror("Memory allocation failed.");
+    free(smat->row_indexes);
+    free(smat->col_indexes);
+    free(smat);
+    exit(EXIT_FAILURE);
+  }
+  smat->data = (double*) calloc(nzero_entries, sizeof(double));
+  if (smat->data == NULL) {
+    perror("Memory allocation failed.");
+    free(smat->data);
+    free(smat);
+    exit(EXIT_FAILURE);
+  }
+  return smat;
+}
+
+
+SparseMatrix* copy_sparse_matrix(SparseMatrix* m) {
+  SparseMatrix* sm = create_sparse_matrix(m->num_rows,
+                                          m->num_cols,
+                                          m->num_of_nnz_entries);
+  memcpy(sm, m, sizeof(SparseMatrix));
+  return sm;
+}
+
+
+void free_sparse_matrix(SparseMatrix* sm) {
+  free(sm->row_indexes);
+  free(sm->col_indexes);
+  free(sm->data);
+  free(sm);
+}
+
+void get_sparse_matrix_shape(SparseMatrix* sm) {
+  printf("%8d %8d %8d\n", sm->num_rows, sm->num_cols, sm->num_of_nnz_entries);
+}
+
+
+void print_sparse_matrix(SparseMatrix* sm) {
+
+
+
 }

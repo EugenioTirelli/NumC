@@ -39,14 +39,14 @@ int main(int argc, char *argv[])
   Matrix *b = create_matrix(2, (int[]){3, 1});
   memcpy(A->data, data2, sizeof(data2));
   memcpy(b->data, bdata, sizeof(bdata));
-  Matrix* test_mat = rndmat(2, (int[]){300,300}, -10.0, 10.0);
+  Matrix* test_mat = rndmat(2, (int[]){6000,6000}, -10.0, 10.0);
+  printf("Created Matrix\n");
 
   Matrix* inverse = inv(test_mat);
 
   free_matrix(A);
   free_matrix(test_mat);
   free_matrix(b);
-  free_matrix(inverse);
   printf("End of program.\n");
   return 0;
 }

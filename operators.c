@@ -1,3 +1,4 @@
+#include <omp.h>
 #include <complex.h>
 #include <stdlib.h>
 #include <assert.h>
@@ -451,14 +452,17 @@ void swap2d_rows(Matrix* m, int id_rows1, int id_rows2) {
     return;
   }
 
+  #pragma omp parallel for
   for (int j = 0; j < ncols; j++) {
     temp->data[j] = m->data[id_rows1 * ncols + j];
   }
 
+  #pragma omp parallel for
   for (int j = 0; j < ncols; j++) {
     m->data[id_rows1 * ncols + j] = m->data[id_rows2 * ncols + j];
   }
 
+  #pragma omp parallel for
   for (int j = 0; j < ncols; j++) {
     m->data[id_rows2 * ncols + j] = temp->data[j];
   }
@@ -480,15 +484,17 @@ void swap2d_cols(Matrix* m, int id_cols1, int id_cols2) {
   if (temp == NULL) {
     return;
   }
-
+  #pragma omp parallel for
   for (int j = 0; j < nrows; j++) {
     temp->data[j] = m->data[id_cols1 + ncols * j];
   }
 
+  #pragma omp parallel for
   for (int j = 0; j < nrows; j++) {
     m->data[id_cols1 + ncols * j] = m->data[id_cols2 + ncols * j];
   }
 
+  #pragma omp parallel for
   for (int j = 0; j < nrows; j++) {
     m->data[id_cols2 + ncols * j] = temp->data[j];
   }
